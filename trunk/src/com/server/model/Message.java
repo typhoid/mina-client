@@ -1,11 +1,11 @@
 package com.server.model;
 
-import com.server.constants.Constants;
+import com.server.constants.CONSTANTS;
 
 public class Message
 {
 	private String value = "";
-	private int type = Constants.TYPE_NONE;
+	private int type = CONSTANTS.TYPES.TYPE_NONE;
 
 	public int getType()
 	{

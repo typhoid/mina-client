@@ -16,7 +16,6 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 import com.server.db.DatabaseManager;
-import com.server.handler.MinaServerHandler;
 
 public class MinaServer
 {
