@@ -1,4 +1,4 @@
-package com.server.handler;
+package com.server;
 
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
