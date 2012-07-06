@@ -36,6 +36,10 @@ public class DatabaseManager
 		{
 			e.printStackTrace();
 			System.err.println("Mysql driver not found!");
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			System.err.println("Mysql driver not found!");
 		}
 	}
 
@@ -66,6 +70,9 @@ public class DatabaseManager
 	 */
 	public static boolean createTable(String tableName, String columnSet)
 	{
+		open();
+		
+		if(_connection == null) return false;
 		try
 		{
 			Statement s = _connection.createStatement();
@@ -86,9 +93,12 @@ public class DatabaseManager
 			String sql = "CREATE TABLE " + tableName + "(" + columnSet + ")";
 			s1.execute(sql);
 			s1.close();
-
+			
+			close();
+			
 		} catch (SQLException exception)
 		{
+			close();
 			exception.printStackTrace();
 			return false;
 		}
@@ -101,26 +111,32 @@ public class DatabaseManager
 	 * @param columnValueSet
 	 * 
 	 *            Example: insert(animal, "name, category",
-	 *            "('snake', 'reptile'),('frog', 'amphibian'),('tuna', 'fish'),('racoon', 'mammal')"
+	 *            "'snake', 'reptile'"
 	 *            );
 	 */
 
 	public static boolean insert(String tableName, String columnNameSet,
 			String columnValueSet)
 	{
+		open();
+		
+		if(_connection == null) return false;
 		try
 		{
 			Statement s = _connection.createStatement();
 			int count;
 
 			count = s.executeUpdate("INSERT INTO " + tableName + " ("
-					+ columnNameSet + ")" + " VALUES" + columnValueSet);
+					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
 
 			s.close();
 			System.out.println(count + " rows were inserted");
 			
+			close();
+			
 		} catch (SQLException e)
 		{
+			close();
 			e.printStackTrace();
 			return false;
 		}
