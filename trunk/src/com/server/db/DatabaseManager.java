@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.server.Config;
+import com.server.CONFIG;
 
 public class DatabaseManager
 {
@@ -17,7 +17,7 @@ public class DatabaseManager
 		{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			_connection = DriverManager.getConnection("jdbc:mysql://"
-					+ Config.DB_SERVER, Config.DB_USERNAME, Config.DB_PASSWORD);
+					+ CONFIG.DB_SERVER, CONFIG.DB_USERNAME, CONFIG.DB_PASSWORD);
 			System.out.println("Database connection established");
 		} catch (ClassNotFoundException e)
 		{
