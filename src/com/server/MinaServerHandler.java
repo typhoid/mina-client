@@ -33,7 +33,9 @@ public class MinaServerHandler extends IoHandlerAdapter
 	{
 		logger.info("Message received in the server..");
 		logger.info("Message is: " + message.toString());
-
+		System.out.println("Message received in the server..");
+		System.out.println("Message is: " + message.toString());
+		
 		Message message2 = (Message) message;
 		int type = message2.getType();
 
