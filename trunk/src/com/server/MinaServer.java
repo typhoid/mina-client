@@ -25,7 +25,7 @@ public class MinaServer
 	{
 		System.out.println("Starting server..");
 
-		//testDB();
+		testDB();
 		
 		IoAcceptor acceptor = new NioSocketAcceptor();
 
@@ -62,8 +62,7 @@ public class MinaServer
 						+ "name CHAR(40), category CHAR(40)");
 
 		DatabaseManager.insert("animal", "name, category",
-				"('snake', 'reptile')," + "('frog', 'amphibian'),"
-						+ "('tuna', 'fish')," + "('racoon', 'mammal')");
+				"'snake', 'reptile'");
 
 		DatabaseManager.close();
 

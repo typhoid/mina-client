@@ -71,8 +71,12 @@ public class DatabaseManager
 	public static boolean createTable(String tableName, String columnSet)
 	{
 		open();
-		
-		if(_connection == null) return false;
+
+		if (_connection == null) 
+		{
+			System.out.println("Connect lost!");
+			return false;
+		}
 		try
 		{
 			Statement s = _connection.createStatement();
@@ -86,16 +90,18 @@ public class DatabaseManager
 			// ResultSet resultSet = s.executeQuery(searchTable);
 			//
 			// if (!resultSet.next())
-
+			
+			System.out.println("DROP TABLE IF EXISTS " + tableName);
 			s.executeUpdate("DROP TABLE IF EXISTS " + tableName);
 			s.close();
-
+			
 			String sql = "CREATE TABLE " + tableName + "(" + columnSet + ")";
+			System.out.println(sql);
 			s1.execute(sql);
 			s1.close();
-			
+
 			close();
-			
+
 		} catch (SQLException exception)
 		{
 			close();
@@ -110,8 +116,7 @@ public class DatabaseManager
 	 * @param columnNameSet
 	 * @param columnValueSet
 	 * 
-	 *            Example: insert(animal, "name, category",
-	 *            "'snake', 'reptile'"
+	 *            Example: insert(animal, "name, category", "'snake', 'reptile'"
 	 *            );
 	 */
 
@@ -119,21 +124,28 @@ public class DatabaseManager
 			String columnValueSet)
 	{
 		open();
-		
-		if(_connection == null) return false;
+
+		if (_connection == null)
+		{
+			System.out.println("Connect lost!");
+			return false;
+		}
 		try
 		{
 			Statement s = _connection.createStatement();
 			int count;
+
+			System.out.println("INSERT INTO " + tableName + " ("
+					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
 
 			count = s.executeUpdate("INSERT INTO " + tableName + " ("
 					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
 
 			s.close();
 			System.out.println(count + " rows were inserted");
-			
+
 			close();
-			
+
 		} catch (SQLException e)
 		{
 			close();
@@ -144,4 +156,3 @@ public class DatabaseManager
 	}
 
 }
-
