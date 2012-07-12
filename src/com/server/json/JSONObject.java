@@ -92,6 +92,7 @@ import java.util.ResourceBundle;
  * @author JSON.org
  * @version 2012-07-02
  */
+@SuppressWarnings("rawtypes")
 public class JSONObject {
 
     /**
@@ -133,7 +134,8 @@ public class JSONObject {
     /**
      * The map where the JSONObject's properties are kept.
      */
-    private final Map map;
+
+	private final Map map;
 
 
     /**
@@ -237,7 +239,9 @@ public class JSONObject {
      *  the JSONObject.
      * @throws JSONException
      */
-    public JSONObject(Map map) {
+
+	@SuppressWarnings("unchecked")
+	public JSONObject(Map map) {
         this.map = new HashMap();
         if (map != null) {
             Iterator i = map.entrySet().iterator();
@@ -955,7 +959,8 @@ public class JSONObject {
     }
 
 
-    private void populateMap(Object bean) {
+    @SuppressWarnings("unchecked")
+	private void populateMap(Object bean) {
         Class klass = bean.getClass();
 
 // If klass is a System class then set includeSuperClass to false.
@@ -1098,7 +1103,8 @@ public class JSONObject {
      * @throws JSONException If the value is non-finite number
      *  or if the key is null.
      */
-    public JSONObject put(String key, Object value) throws JSONException {
+    @SuppressWarnings("unchecked")
+	public JSONObject put(String key, Object value) throws JSONException {
         if (key == null) {
             throw new JSONException("Null key.");
         }

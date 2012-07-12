@@ -10,7 +10,6 @@ import com.server.db.DatabaseManager;
 import com.server.helper.JSONHelper;
 import com.server.json.JSONException;
 import com.server.json.JSONObject;
-import com.server.model.Message;
 
 /**
  * @author giftsam
@@ -32,23 +31,52 @@ public class MinaServerHandler extends IoHandlerAdapter
 	public void messageReceived(IoSession session, Object message)
 	{
 		logger.info("Message received in the server..");
-		logger.info("Message is: " + message.toString());
-		System.out.println("Message received in the server..");
-		System.out.println("Message is: " + message.toString());
-		
-		Message message2 = (Message) message;
-		int type = message2.getType();
+
+		String messageReceived = (String) message;
+		logger.info("Message is: " + messageReceived);
 
 		JSONObject jsonObject = null;
 		try
 		{
-			jsonObject = new JSONObject(message2.getValue());
+			jsonObject = new JSONObject(messageReceived);
 		} catch (JSONException e)
 		{
 			jsonObject = null;
 			e.printStackTrace();
 		}
-		if (jsonObject == null) return;
+		if (jsonObject == null)
+		{
+			logger.error("Load message fail!");
+			return;
+		}
+
+		int type = JSONHelper.getInt(jsonObject, CONSTANTS.TYPES.JSON_TYPE + "");
+
+		String value = null;
+		value = JSONHelper.getString(jsonObject, CONSTANTS.TYPES.JSON_VALUE
+				+ "");
+
+		if (value == null || value.equals(""))
+		{
+			logger.error("Have no message value!");
+			return;
+		}
+
+		jsonObject = null;
+		try
+		{
+			jsonObject = new JSONObject(value);
+		} catch (JSONException e)
+		{
+			jsonObject = null;
+			e.printStackTrace();
+		}
+
+		if (jsonObject == null)
+		{
+			logger.error("Load message value fail!");
+			return;
+		}
 
 		switch (type)
 		{
@@ -63,74 +91,63 @@ public class MinaServerHandler extends IoHandlerAdapter
 				break;
 			case CONSTANTS.TYPES.TYPE_SELL:
 
-				String columnSet = "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
-						+ "PRIMARY KEY (id), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_ACCOUNT_NUMBER
-						+ " CHAR(15), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_AMOUNT
-						+ " INT, "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_CODE_BOX
-						+ " CHAR(20), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_CODE_PRODUCT
-						+ " CHAR(20), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_DATE
-						+ " CHAR(30), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_IS_DELIVERIED
-						+ " INT, "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_MACHINE_ID
-						+ " CHAR(20), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_MACHINE_NAME
-						+ " CHAR(20), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_PRICE
-						+ " INT, "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER1
-						+ " CHAR(20), "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER2
-						+ " CHAR(20), ";
-				DatabaseManager.createTable(CONSTANTS.PRODUCT_SELL.TABLE_NAME, columnSet);
+				String columnSet = CONSTANTS.PRODUCT_SELL.COLUMN_ACCOUNT_NUMBER
+						+ ", " + CONSTANTS.PRODUCT_SELL.COLUMN_AMOUNT + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_BOX_CODE + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_PRODUCT_CODE + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_DATE + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_IS_DELIVERIED + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_MACHINE_ID + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_PRICE + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER1 + ", "
+						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER2;
 
-				columnSet ="\"" + 
-						CONSTANTS.PRODUCT_SELL.COLUMN_ACCOUNT_NUMBER
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_AMOUNT
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_CODE_BOX
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_CODE_PRODUCT
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_DATE
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_IS_DELIVERIED
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_MACHINE_ID
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_MACHINE_NAME
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_PRICE
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER1
-						+ ", "
-						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER2
-						+ "\"";
-				
 				String columnValue = null;
-				
-				columnValue = "\"" + 
-						JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_ACOUNT_NUMBER + "")
-						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_AMOUNT + "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_BOX+ "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_PRODUCT+ "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_DATE + "")
-						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_IS_DELIVERIED + "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_MACHINE_ID + "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_MACHINE_NAME + "")
-						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_PRICE + "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_WORK_NUMBER1 + "")
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_WORK_NUMBER2 + "")
-						+ "\"";
-				
+
+				columnValue = "'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_ACOUNT_NUMBER
+								+ "")
+						+ "',"
+
+						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_AMOUNT
+								+ "")
+
+						+ ",'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_BOX
+								+ "")
+						+ "',"
+
+						+ "'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_PRODUCT
+								+ "")
+						+ "',"
+
+						+ "'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_DATE
+								+ "")
+						+ "',"
+
+						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_IS_DELIVERIED
+								+ "")
+						+ ",'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_MACHINE_ID
+								+ "")
+						+ "',"
+
+						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_PRICE
+								+ "")
+
+						+ ",'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_WORK_NUMBER1
+								+ "")
+						+ "',"
+
+						+ "'"
+						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_WORK_NUMBER2
+								+ "") + "'";
+
 				DatabaseManager.insert(CONSTANTS.PRODUCT_SELL.TABLE_NAME, columnSet, columnValue);
-				
+
 				break;
 
 			default:
@@ -158,6 +175,11 @@ public class MinaServerHandler extends IoHandlerAdapter
 	@Override
 	public void sessionCreated(IoSession session) throws Exception
 	{
+		logger.debug("@1111111111111111111111111111");
+		logger.error("@222222222222222222222222222222");
+		logger.trace("@333333333333333333333333");
+		logger.warn("@4444444444444444444444444");
+
 		session.write("111111111111111111111111111");
 		// TODO Auto-generated method stub
 		super.sessionCreated(session);
