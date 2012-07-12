@@ -14,9 +14,10 @@ public final class JSONHelper
 			resultStr = jsonObject.getString(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr
+					+ " is not available!");
 		}
-		if(resultStr == null) return "";
+		if (resultStr == null) return "";
 		return resultStr;
 	}
 
@@ -28,10 +29,11 @@ public final class JSONHelper
 			result = jsonObject.getInt(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr + " is not available!");
 		}
 		return result;
 	}
+
 	public static boolean getBoolean(JSONObject jsonObject, String keyStr)
 	{
 		boolean result = true;
@@ -40,10 +42,11 @@ public final class JSONHelper
 			result = jsonObject.getBoolean(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr + " is not available!");
 		}
 		return result;
 	}
+
 	public static double getDouble(JSONObject jsonObject, String keyStr)
 	{
 		double result = 0;
@@ -52,10 +55,11 @@ public final class JSONHelper
 			result = jsonObject.getDouble(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr + " is not available!");
 		}
 		return result;
 	}
+
 	public static long getLong(JSONObject jsonObject, String keyStr)
 	{
 		long result = 0;
@@ -64,10 +68,11 @@ public final class JSONHelper
 			result = jsonObject.getLong(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr + " is not available!");
 		}
 		return result;
 	}
+
 	public static JSONObject getJSONObject(JSONObject jsonObject, String keyStr)
 	{
 		JSONObject result = null;
@@ -76,10 +81,11 @@ public final class JSONHelper
 			result = jsonObject.getJSONObject(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr + " is not available!");
 		}
 		return result;
 	}
+
 	public static JSONArray getJSONArray(JSONObject jsonObject, String keyStr)
 	{
 		JSONArray result = null;
@@ -88,9 +94,9 @@ public final class JSONHelper
 			result = jsonObject.getJSONArray(keyStr);
 		} catch (JSONException e)
 		{
-			System.out.println(keyStr + " is not available!");
+			System.out.println("JSON PARSE: Key " + keyStr + " is not available!");
 		}
 		return result;
 	}
-	
+
 }
