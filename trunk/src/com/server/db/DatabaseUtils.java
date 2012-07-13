@@ -79,9 +79,29 @@ public final class DatabaseUtils
 				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_STAFF_CHECKER
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_AMOUNT
-				+ " int(11) unsigned NOT NULL, "
+				+ " int(10) unsigned NOT NULL, "
 				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_CODE_BOX
 				+ " int(10) unsigned NOT NULL";
+
+		return DatabaseManager.createTable(CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME, columnSet);
+	}
+
+	public static final boolean createTableBoxInventory()
+	{
+		String columnSet =
+		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
+		// + "PRIMARY KEY (id), "
+		CONSTANTS.BOX_INVENTORY.COLUMN_ID
+				+ "  int(20) NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_ID + ")" + ", "
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_MACHINE_ID
+				+ " varchar(50) NOT NULL, "
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_PRODUCT
+				+ " varchar(50) NOT NULL, "
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_AMOUNT
+				+ " int(11) unsigned NOT NULL, "
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_BOX
+				+ " int(11) unsigned NOT NULL";
 
 		return DatabaseManager.createTable(CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME, columnSet);
 	}
