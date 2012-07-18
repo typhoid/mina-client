@@ -1,5 +1,7 @@
 package com.server;
 
+import java.sql.Timestamp;
+
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -81,12 +83,18 @@ public class MinaServerHandler extends IoHandlerAdapter
 
 		String columnSet = null;
 		String columnValue = null;
+		Timestamp timestamp = null;
+		long time = 0;
+		String tableName = null;
 
 		switch (type)
 		{
 			case CONSTANTS.TYPES.TYPE_BOX_INVENTORY:
-
+				
 				DatabaseUtils.createTableBoxInventory();
+				
+				tableName = CONSTANTS.BOX_INVENTORY.TABLE_NAME;
+				
 				columnSet = CONSTANTS.BOX_INVENTORY.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_BOX + ", "
 						+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_PRODUCT + ", "
@@ -110,6 +118,9 @@ public class MinaServerHandler extends IoHandlerAdapter
 			case CONSTANTS.TYPES.TYPE_PRODUCT_PUTIN:
 
 				DatabaseUtils.createTableProductPutIn();
+				
+				tableName = CONSTANTS.PRODUCT_PUT_IN.TABLE_NAME;
+				
 				columnSet = CONSTANTS.PRODUCT_PUT_IN.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_BOX + ", "
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_PRODUCT + ", "
@@ -117,6 +128,12 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_MACHINE_ID + ", "
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_STAFF_CHECKER + ", "
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_STAFF_SERVICE;
+
+				time = JSONHelper.getLong(jsonObject, CONSTANTS.PRODUCT_PUT_IN.COLUMN_DATE);
+
+				if (time == 0) time = System.currentTimeMillis();
+
+				timestamp = new Timestamp(time);
 
 				columnValue = +JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_PUT_IN.COLUMN_INDEX_AMOUNT
 						+ "")
@@ -128,10 +145,7 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ ",'"
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_PUT_IN.COLUMN_INDEX_CODE_PRODUCT
 								+ "")
-						+ "','"
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_PUT_IN.COLUMN_INDEX_DATE
-								+ "")
-						+ "','"
+						+ "', ?,'"
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_PUT_IN.COLUMN_INDEX_MACHINE_ID
 								+ "")
 						+ "','"
@@ -147,6 +161,8 @@ public class MinaServerHandler extends IoHandlerAdapter
 
 				DatabaseUtils.createTableProductTakeOut();
 
+				tableName = CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME;
+				
 				columnSet = CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_CODE_BOX + ", "
 						+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_CODE_PRODUCT + ", "
@@ -155,6 +171,12 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_STAFF_CHECKER
 						+ ", "
 						+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_STAFF_SERVICE;
+
+				time = JSONHelper.getLong(jsonObject, CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_DATE);
+
+				if (time == 0) time = System.currentTimeMillis();
+
+				timestamp = new Timestamp(time);
 
 				columnValue = +JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_INDEX_AMOUNT
 						+ "")
@@ -166,10 +188,7 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ ",'"
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_INDEX_CODE_PRODUCT
 								+ "")
-						+ "','"
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_INDEX_DATE
-								+ "")
-						+ "','"
+						+ "', ?,'"
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_INDEX_MACHINE_ID
 								+ "")
 						+ "','"
@@ -184,6 +203,8 @@ public class MinaServerHandler extends IoHandlerAdapter
 
 				DatabaseUtils.createTableProductSell();
 
+				tableName = CONSTANTS.PRODUCT_SELL.TABLE_NAME;
+				
 				columnSet = CONSTANTS.PRODUCT_SELL.COLUMN_ACCOUNT_NUMBER + ", "
 						+ CONSTANTS.PRODUCT_SELL.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.PRODUCT_SELL.COLUMN_BOX_CODE + ", "
@@ -195,6 +216,12 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER1 + ", "
 						+ CONSTANTS.PRODUCT_SELL.COLUMN_WORK_NUMBER2;
 
+				time = JSONHelper.getLong(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_DATE);
+
+				if (time == 0) time = System.currentTimeMillis();
+
+				timestamp = new Timestamp(time);
+
 				columnValue = "'"
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_ACOUNT_NUMBER
 								+ "")
@@ -203,20 +230,13 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_AMOUNT
 								+ "")
 
-						+ ",'"
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_BOX
+						+ ","
+						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_BOX
 								+ "")
-						+ "',"
-
-						+ "'"
+						+ ",'"
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_CODE_PRODUCT
 								+ "")
-						+ "',"
-
-						+ "'"
-						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_DATE
-								+ "")
-						+ "',"
+						+ "', ?,"
 
 						+ JSONHelper.getInt(jsonObject, CONSTANTS.PRODUCT_SELL.COLUMN_INDEX_IS_DELIVERIED
 								+ "")
@@ -241,7 +261,11 @@ public class MinaServerHandler extends IoHandlerAdapter
 			default:
 				break;
 		}
-		if (columnSet != null && columnValue != null) DatabaseManager.insert(CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME, columnSet, columnValue);
+		if (columnSet != null && columnValue != null && tableName != null)
+		{
+			if (timestamp != null) DatabaseManager.insert(tableName, columnSet, columnValue, timestamp);
+			else DatabaseManager.insert(tableName, columnSet, columnValue);
+		}
 	}
 
 	@SuppressWarnings("deprecation")

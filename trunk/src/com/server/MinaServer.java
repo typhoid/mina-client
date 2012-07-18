@@ -25,7 +25,7 @@ public class MinaServer
 	{
 		System.out.println("Starting server..");
 
-		//testDB();
+		testDB();
 		
 		IoAcceptor acceptor = new NioSocketAcceptor();
 
@@ -54,7 +54,7 @@ public class MinaServer
 	@SuppressWarnings("unused")
 	private static void testDB()
 	{
-
+		
 		DatabaseManager.open();
 
 		DatabaseManager.createTable("animal",
