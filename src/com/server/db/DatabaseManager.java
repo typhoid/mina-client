@@ -2,8 +2,10 @@ package com.server.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
 import com.server.CONFIG;
 
@@ -13,9 +15,14 @@ public class DatabaseManager
 
 	public static void open()
 	{
+		System.out.println("Database opening");
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			
+			System.out.println("Database connecting: jdbc:mysql://"
+					+ Config.DB_SERVER+"?username="+ Config.DB_USERNAME+"?password="+ Config.DB_PASSWORD);
+			
 			_connection = DriverManager.getConnection("jdbc:mysql://"
 					+ CONFIG.DB_SERVER, CONFIG.DB_USERNAME, CONFIG.DB_PASSWORD);
 			System.out.println("Database connection established");
@@ -41,6 +48,7 @@ public class DatabaseManager
 			e.printStackTrace();
 			System.err.println("Mysql driver not found!");
 		}
+		System.out.println("Database opened successful!");
 	}
 
 	public static void close()
@@ -72,14 +80,14 @@ public class DatabaseManager
 	{
 		open();
 
-		if (_connection == null) 
+		if (_connection == null)
 		{
 			System.out.println("Connect lost!");
 			return false;
 		}
 		try
 		{
-			Statement s = _connection.createStatement();
+			// Statement s = _connection.createStatement();
 			Statement s1 = _connection.createStatement();
 
 			// create new tables
@@ -90,12 +98,13 @@ public class DatabaseManager
 			// ResultSet resultSet = s.executeQuery(searchTable);
 			//
 			// if (!resultSet.next())
-			
-			System.out.println("DROP TABLE IF EXISTS " + tableName);
-			s.executeUpdate("DROP TABLE IF EXISTS " + tableName);
-			s.close();
-			
-			String sql = "CREATE TABLE " + tableName + "(" + columnSet + ")";
+
+			// System.out.println("DROP TABLE IF EXISTS " + tableName);
+			// s.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+			// s.close();
+			//
+			String sql = "CREATE TABLE IF NOT EXISTS " + tableName + "("
+					+ columnSet + ")";
 			System.out.println(sql);
 			s1.execute(sql);
 			s1.close();
@@ -140,6 +149,56 @@ public class DatabaseManager
 
 			count = s.executeUpdate("INSERT INTO " + tableName + " ("
 					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
+
+			s.close();
+			System.out.println(count + " rows were inserted");
+
+			close();
+
+		} catch (SQLException e)
+		{
+			close();
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * insert with datetime type
+	 * @param tableName
+	 * @param columnNameSet
+	 * @param columnValueSet
+	 * 
+	 *            Example: insert(animal, "name, category", "'snake', 'reptile'"
+	 *            , datetime);
+	 */
+
+	public static boolean insert(String tableName, String columnNameSet,
+			String columnValueSet, Timestamp timestamp)
+	{
+		open();
+
+		if (_connection == null)
+		{
+			System.out.println("Connect lost!");
+			return false;
+		}
+		try
+		{
+			
+			int count;
+
+			System.out.println("INSERT INTO " + tableName + " ("
+					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
+
+			String query = "INSERT INTO " + tableName + " ("
+					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")";
+			
+			PreparedStatement s = _connection.prepareStatement(query);
+			s.setTimestamp(1, timestamp);
+			
+			count = s.executeUpdate();
 
 			s.close();
 			System.out.println(count + " rows were inserted");

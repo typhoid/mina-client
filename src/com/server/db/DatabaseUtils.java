@@ -10,7 +10,7 @@ public final class DatabaseUtils
 		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
 		// + "PRIMARY KEY (id), "
 		CONSTANTS.PRODUCT_SELL.COLUMN_ID
-				+ "  varchar(50) NOT NULL, PRIMARY KEY ("
+				+ " int(10) unsigned NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
 				+ CONSTANTS.PRODUCT_SELL.COLUMN_ID + ")" + ", "
 				+ CONSTANTS.PRODUCT_SELL.COLUMN_ACCOUNT_NUMBER
 				+ " varchar(50) NOT NULL, "
@@ -47,7 +47,7 @@ public final class DatabaseUtils
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_PRODUCT
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_DATE
-				+ " varchar(50) NOT NULL, "
+				+ " datetime NOT NULL, "
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_STAFF_SERVICE
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_STAFF_CHECKER
