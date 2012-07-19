@@ -19,10 +19,11 @@ public class DatabaseManager
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			
+
 			System.out.println("Database connecting: jdbc:mysql://"
-					+ Config.DB_SERVER+"?username="+ Config.DB_USERNAME+"?password="+ Config.DB_PASSWORD);
-			
+					+ CONFIG.DB_SERVER + "?username=" + CONFIG.DB_USERNAME
+					+ "?password=" + CONFIG.DB_PASSWORD);
+
 			_connection = DriverManager.getConnection("jdbc:mysql://"
 					+ CONFIG.DB_SERVER, CONFIG.DB_USERNAME, CONFIG.DB_PASSWORD);
 			System.out.println("Database connection established");
@@ -166,6 +167,7 @@ public class DatabaseManager
 
 	/**
 	 * insert with datetime type
+	 * 
 	 * @param tableName
 	 * @param columnNameSet
 	 * @param columnValueSet
@@ -186,18 +188,18 @@ public class DatabaseManager
 		}
 		try
 		{
-			
+
 			int count;
 
 			System.out.println("INSERT INTO " + tableName + " ("
 					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
 
-			String query = "INSERT INTO " + tableName + " ("
-					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")";
-			
+			String query = "INSERT INTO " + tableName + " (" + columnNameSet
+					+ ")" + " VALUES(" + columnValueSet + ")";
+
 			PreparedStatement s = _connection.prepareStatement(query);
 			s.setTimestamp(1, timestamp);
-			
+
 			count = s.executeUpdate();
 
 			s.close();

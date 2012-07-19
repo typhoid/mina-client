@@ -2,23 +2,48 @@ package com.server.constants;
 
 public final class CONSTANTS
 {
-	public final class TYPES
+	public static final class CLIENT_TRANSACTION
 	{
-		public static final int TYPE_NONE = 0;
-		public static final int TYPE_SELL = TYPE_NONE + 1;
-		public static final int TYPE_PRODUCT_PUTIN = TYPE_SELL + 1;
-		public static final int TYPE_PRODUCT_TAKEOUT = TYPE_PRODUCT_PUTIN + 1;
-		public static final int TYPE_BOX_INVENTORY = TYPE_PRODUCT_TAKEOUT + 1;
+		public static final int NONE = 0;
+		public static final int SELL = NONE + 1;
+		public static final int PRODUCT_PUTIN = SELL + 1;
+		public static final int PRODUCT_TAKEOUT = PRODUCT_PUTIN + 1;
+		public static final int BOX_INVENTORY = PRODUCT_TAKEOUT + 1;
 
-		public static final int JSON_TYPE = 0;
-		public static final int JSON_VALUE = JSON_TYPE + 1;
-		
-		public static final int TRANSACTION_CHANGE_PRICE = 0;
-		public static final int TRANSACTION_PRODUCT_TAKE_OUT = 1;
-		public static final int TRANSACTION_PRODUCT_PUT_IN = 2;
 	}
 
-	public final class PRODUCT_SELL
+	public static final class SERVER_TRANSACTION
+	{
+		public static final int NONE = 0;
+		public static final int REPLY = NONE + 1;
+		public static final int ACCOUNT = REPLY + 1;
+		public static final int PRODUCT = ACCOUNT + 1;
+
+	}
+
+	
+	public static final class JSON
+	{
+
+		public static final int KEY_TYPE = 0;
+		public static final int KEY_VALUE = KEY_TYPE + 1;
+
+	}
+
+	public static final class STATUS
+	{
+		public static final int RECEIVE_OK = 0;
+		public static final int RECEIVE_FAIL_VALUE_NULL = RECEIVE_OK + 1;
+		public static final int RECEIVE_FAIL_JSON = RECEIVE_FAIL_VALUE_NULL + 1;
+		public static final int RECEIVE_FAIL_JSON_VALUE = RECEIVE_FAIL_JSON + 1;
+		public static final int RECEIVE_UNKNOWN_TYPE = RECEIVE_FAIL_JSON_VALUE + 1;
+
+		public static final int DB_CREATE_FAIL = 1000;
+		public static final int DB_INSERT_FAIL = DB_CREATE_FAIL + 1;
+
+	}
+
+	public static final class PRODUCT_SELL
 	{
 		public static final String TABLE_NAME = "productsellout";
 
@@ -47,7 +72,7 @@ public final class CONSTANTS
 		public static final String COLUMN_AMOUNT = "iQuantity";
 	}
 
-	public final class BOX_INVENTORY
+	public static final class BOX_INVENTORY
 	{
 		public static final String TABLE_NAME = "productinventorybox";
 
@@ -64,7 +89,7 @@ public final class CONSTANTS
 		public static final String COLUMN_MACHINE_ID = "VendingMachineCode";
 	}
 
-	public final class PRODUCT_TAKE_OUT
+	public static final class PRODUCT_TAKE_OUT
 	{
 		public static final String TABLE_NAME = "producttakeout";
 
@@ -86,8 +111,8 @@ public final class CONSTANTS
 		public static final String COLUMN_AMOUNT = "iQuantity";
 		public static final String COLUMN_MACHINE_ID = "VendingMachineCode";
 
-		
 	}
+
 	public final class PRODUCT_PUT_IN
 	{
 		public static final String TABLE_NAME = "productputin";
@@ -110,7 +135,6 @@ public final class CONSTANTS
 		public static final String COLUMN_AMOUNT = "iQuantity";
 		public static final String COLUMN_MACHINE_ID = "VendingMachineCode";
 
-		
 	}
 
 }
