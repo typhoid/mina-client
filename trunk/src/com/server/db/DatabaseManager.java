@@ -3,6 +3,7 @@ package com.server.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -191,12 +192,9 @@ public class DatabaseManager
 
 			int count;
 
-			System.out.println("INSERT INTO " + tableName + " ("
-					+ columnNameSet + ")" + " VALUES(" + columnValueSet + ")");
-
 			String query = "INSERT INTO " + tableName + " (" + columnNameSet
 					+ ")" + " VALUES(" + columnValueSet + ")";
-
+			System.out.println(query);
 			PreparedStatement s = _connection.prepareStatement(query);
 			s.setTimestamp(1, timestamp);
 
@@ -214,6 +212,49 @@ public class DatabaseManager
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Get all from table
+	 * 
+	 * @param tableName
+	 * @param columnNameSet
+	 * @param columnValueSet
+	 * 
+	 *            Example: getAll(animal);
+	 */
+
+	public static ResultSet getAll(String tableName)
+	{
+		open();
+
+		if (_connection == null)
+		{
+			System.out.println("Connect lost!");
+			return null;
+		}
+		try
+		{
+			ResultSet resultSet;
+
+			String query = "SELECT * FROM " + tableName;
+			System.out.println(query);
+			Statement s = _connection.createStatement();
+
+			resultSet = s.executeQuery(query);
+
+			s.close();
+
+			close();
+
+			return resultSet;
+		} catch (SQLException e)
+		{
+			close();
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 }

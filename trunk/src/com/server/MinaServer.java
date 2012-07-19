@@ -25,7 +25,7 @@ public class MinaServer
 	{
 		System.out.println("Starting server..");
 
-		testDB();
+		//testDB();
 		
 		IoAcceptor acceptor = new NioSocketAcceptor();
 
