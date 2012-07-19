@@ -40,11 +40,11 @@ public final class DatabaseUtils
 		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
 		// + "PRIMARY KEY (id), "
 		CONSTANTS.PRODUCT_PUT_IN.COLUMN_ID
-				+ "  varchar(20) NOT NULL, PRIMARY KEY ("
+				+ " int(10) unsigned NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_ID + ")" + ", "
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_MACHINE_ID
 				+ " varchar(50) NOT NULL, "
-				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_PRODUCT
+				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_PRODUCT_CODE
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_DATE
 				+ " datetime NOT NULL, "
@@ -54,7 +54,7 @@ public final class DatabaseUtils
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_AMOUNT
 				+ " int(11) unsigned NOT NULL, "
-				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_BOX
+				+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_BOX_CODE
 				+ " int(10) unsigned NOT NULL";
 
 		return DatabaseManager.createTable(CONSTANTS.PRODUCT_PUT_IN.TABLE_NAME, columnSet);
@@ -66,7 +66,7 @@ public final class DatabaseUtils
 		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
 		// + "PRIMARY KEY (id), "
 		CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_ID
-				+ "  varchar(20) NOT NULL, PRIMARY KEY ("
+				+ " int(10) unsigned NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
 				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_ID + ")" + ", "
 				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_MACHINE_ID
 				+ " varchar(50) NOT NULL, "
@@ -80,7 +80,7 @@ public final class DatabaseUtils
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_AMOUNT
 				+ " int(10) unsigned NOT NULL, "
-				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_CODE_BOX
+				+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_BOX_CODE
 				+ " int(10) unsigned NOT NULL";
 
 		return DatabaseManager.createTable(CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME, columnSet);
@@ -92,18 +92,76 @@ public final class DatabaseUtils
 		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
 		// + "PRIMARY KEY (id), "
 		CONSTANTS.BOX_INVENTORY.COLUMN_ID
-				+ "  int(20) NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
+				+ " int(10) unsigned NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
 				+ CONSTANTS.BOX_INVENTORY.COLUMN_ID + ")" + ", "
 				+ CONSTANTS.BOX_INVENTORY.COLUMN_MACHINE_ID
 				+ " varchar(50) NOT NULL, "
-				+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_PRODUCT
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_PRODUCT_CODE
 				+ " varchar(50) NOT NULL, "
 				+ CONSTANTS.BOX_INVENTORY.COLUMN_AMOUNT
 				+ " int(11) unsigned NOT NULL, "
-				+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_BOX
+				+ CONSTANTS.BOX_INVENTORY.COLUMN_BOX_CODE
 				+ " int(11) unsigned NOT NULL";
 
 		return DatabaseManager.createTable(CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME, columnSet);
+	}
+
+	public static final boolean createTableProduct()
+	{
+		String columnSet =
+		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
+		// + "PRIMARY KEY (id), "
+		CONSTANTS.PRODUCT.COLUMN_ID
+				+ " int(10) unsigned NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
+				+ CONSTANTS.PRODUCT.COLUMN_ID + ")" + ", "
+				+ CONSTANTS.PRODUCT.COLUMN_IMAGE_PATH
+				+ " varchar(100) NOT NULL, "
+				+ CONSTANTS.PRODUCT.COLUMN_PRICE_BUYING
+				+ " int(11) DEFAULT NULL, "
+				+ CONSTANTS.PRODUCT.COLUMN_PRICE_SELLING
+				+ " int(11) DEFAULT NULL, "
+				+ CONSTANTS.PRODUCT.COLUMN_PRODUCT_CODE
+				+ " varchar(50) NOT NULL, "
+				+ CONSTANTS.PRODUCT.COLUMN_PRODUCT_GROUP_ID
+				+ " int(10) unsigned DEFAULT NULL, "
+				+ CONSTANTS.PRODUCT.COLUMN_PRODUCT_NAME
+				+ " varchar(50) NOT NULL, "
+				+ CONSTANTS.PRODUCT.COLUMN_PRODUCT_SUPPLIER_ID
+				+ " int(10) unsigned NOT NULL";
+
+		return DatabaseManager.createTable(CONSTANTS.PRODUCT.TABLE_NAME, columnSet);
+	}
+
+	public static final boolean createTableAccount()
+	{
+		String columnSet =
+		// "id INT UNSIGNED NOT NULL AUTO_INCREMENT, "
+		// + "PRIMARY KEY (id), "
+		CONSTANTS.ACCOUNT.COLUMN_ID
+				+ " int(10) unsigned NOT NULL AUTO_INCREMENT, PRIMARY KEY ("
+				+ CONSTANTS.ACCOUNT.COLUMN_ID + ")" + ", "
+				+ CONSTANTS.ACCOUNT.COLUMN_ACCOUNT_AMOUNT
+				+ " int(10) unsigned NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_ACTIVE
+				+ " tinyint(4) NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_DATE_CREATED
+				+ " datetime NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_GROUP_ID
+				+ " int(10) unsigned NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_PASSWORD
+				+ " varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_PIN_CODE
+				+ " varchar(10) COLLATE utf8_unicode_ci NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_POSITION_ID
+				+ " int(10) unsigned NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_STAFF_ID
+				+ " varchar(50) COLLATE utf8_unicode_ci NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_TERMINATED
+				+ " tinyint(4) NOT NULL, "
+				+ CONSTANTS.ACCOUNT.COLUMN_USER_NAME
+				+ " varchar(100) COLLATE utf8_unicode_ci NOT NULL";
+
+		return DatabaseManager.createTable(CONSTANTS.ACCOUNT.TABLE_NAME, columnSet);
 	}
 
 }
