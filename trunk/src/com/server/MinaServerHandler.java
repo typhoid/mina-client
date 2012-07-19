@@ -8,6 +8,9 @@ import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.server.constants.CONSTANTS;
+import com.server.constants.CONSTANTS.JSON;
+import com.server.constants.CONSTANTS.SERVER_TRANSACTION;
+import com.server.constants.CONSTANTS.STATUS;
 import com.server.db.DatabaseManager;
 import com.server.db.DatabaseUtils;
 import com.server.helper.JSONHelper;
@@ -38,31 +41,79 @@ public class MinaServerHandler extends IoHandlerAdapter
 		String messageReceived = (String) message;
 		logger.info("Message is: " + messageReceived);
 
+		if (messageReceived != null && !messageReceived.equals(""))
+		{
+			int status = process(messageReceived);
+
+			JSONObject jsonObject = new JSONObject();
+			try
+			{
+				jsonObject.put(JSON.KEY_TYPE + "", SERVER_TRANSACTION.REPLY);
+				jsonObject.put(CONSTANTS.JSON.KEY_VALUE + "", status);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			session.write(jsonObject.toString());
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void sessionIdle(IoSession session, IdleStatus status)
+	{
+		logger.info("Disconnecting the idle.");
+		// disconnect an idle client
+		session.close();
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void exceptionCaught(IoSession session, Throwable cause)
+	{
+		// close the connection on exceptional situation
+		session.close();
+	}
+
+	@Override
+	public void sessionCreated(IoSession session) throws Exception
+	{
+		session.write("111111111111111111111111111");
+
+		super.sessionCreated(session);
+	}
+
+	@Override
+	public void messageSent(IoSession session, Object message) throws Exception
+	{
+		super.messageSent(session, message);
+	}
+
+	private int process(String message)
+	{
 		JSONObject jsonObject = null;
 		try
 		{
-			jsonObject = new JSONObject(messageReceived);
+			jsonObject = new JSONObject(message);
 		} catch (JSONException e)
 		{
 			jsonObject = null;
 			e.printStackTrace();
-		}
-		if (jsonObject == null)
-		{
+
 			logger.error("Load message fail!");
-			return;
+			return STATUS.RECEIVE_FAIL_JSON;
 		}
 
-		int type = JSONHelper.getInt(jsonObject, CONSTANTS.TYPES.JSON_TYPE + "");
+		int type = JSONHelper.getInt(jsonObject, CONSTANTS.JSON.KEY_TYPE + "");
 
 		String value = null;
-		value = JSONHelper.getString(jsonObject, CONSTANTS.TYPES.JSON_VALUE
-				+ "");
+		value = JSONHelper.getString(jsonObject, CONSTANTS.JSON.KEY_VALUE + "");
 
 		if (value == null || value.equals(""))
 		{
 			logger.error("Have no message value!");
-			return;
+			return STATUS.RECEIVE_FAIL_VALUE_NULL;
 		}
 
 		jsonObject = null;
@@ -73,12 +124,9 @@ public class MinaServerHandler extends IoHandlerAdapter
 		{
 			jsonObject = null;
 			e.printStackTrace();
-		}
 
-		if (jsonObject == null)
-		{
 			logger.error("Load message value fail!");
-			return;
+			return STATUS.RECEIVE_FAIL_JSON_VALUE;
 		}
 
 		String columnSet = null;
@@ -87,14 +135,17 @@ public class MinaServerHandler extends IoHandlerAdapter
 		long time = 0;
 		String tableName = null;
 
+		boolean isCreateTableSuccess = false;
+		boolean isInsertSuccess = false;
+
 		switch (type)
 		{
-			case CONSTANTS.TYPES.TYPE_BOX_INVENTORY:
-				
-				DatabaseUtils.createTableBoxInventory();
-				
+			case CONSTANTS.CLIENT_TRANSACTION.BOX_INVENTORY:
+
+				isCreateTableSuccess = DatabaseUtils.createTableBoxInventory();
+
 				tableName = CONSTANTS.BOX_INVENTORY.TABLE_NAME;
-				
+
 				columnSet = CONSTANTS.BOX_INVENTORY.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_BOX + ", "
 						+ CONSTANTS.BOX_INVENTORY.COLUMN_CODE_PRODUCT + ", "
@@ -115,12 +166,12 @@ public class MinaServerHandler extends IoHandlerAdapter
 								+ "") + "'";
 
 				break;
-			case CONSTANTS.TYPES.TYPE_PRODUCT_PUTIN:
+			case CONSTANTS.CLIENT_TRANSACTION.PRODUCT_PUTIN:
 
-				DatabaseUtils.createTableProductPutIn();
-				
+				isCreateTableSuccess = DatabaseUtils.createTableProductPutIn();
+
 				tableName = CONSTANTS.PRODUCT_PUT_IN.TABLE_NAME;
-				
+
 				columnSet = CONSTANTS.PRODUCT_PUT_IN.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_BOX + ", "
 						+ CONSTANTS.PRODUCT_PUT_IN.COLUMN_CODE_PRODUCT + ", "
@@ -157,12 +208,12 @@ public class MinaServerHandler extends IoHandlerAdapter
 								+ "") + "'";
 
 				break;
-			case CONSTANTS.TYPES.TYPE_PRODUCT_TAKEOUT:
+			case CONSTANTS.CLIENT_TRANSACTION.PRODUCT_TAKEOUT:
 
-				DatabaseUtils.createTableProductTakeOut();
+				isCreateTableSuccess = DatabaseUtils.createTableProductTakeOut();
 
 				tableName = CONSTANTS.PRODUCT_TAKE_OUT.TABLE_NAME;
-				
+
 				columnSet = CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_CODE_BOX + ", "
 						+ CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_CODE_PRODUCT + ", "
@@ -199,12 +250,12 @@ public class MinaServerHandler extends IoHandlerAdapter
 						+ JSONHelper.getString(jsonObject, CONSTANTS.PRODUCT_TAKE_OUT.COLUMN_INDEX_STAFF_SERVICE
 								+ "") + "'";
 				break;
-			case CONSTANTS.TYPES.TYPE_SELL:
+			case CONSTANTS.CLIENT_TRANSACTION.SELL:
 
-				DatabaseUtils.createTableProductSell();
+				isCreateTableSuccess = DatabaseUtils.createTableProductSell();
 
 				tableName = CONSTANTS.PRODUCT_SELL.TABLE_NAME;
-				
+
 				columnSet = CONSTANTS.PRODUCT_SELL.COLUMN_ACCOUNT_NUMBER + ", "
 						+ CONSTANTS.PRODUCT_SELL.COLUMN_AMOUNT + ", "
 						+ CONSTANTS.PRODUCT_SELL.COLUMN_BOX_CODE + ", "
@@ -259,49 +310,16 @@ public class MinaServerHandler extends IoHandlerAdapter
 				break;
 
 			default:
-				break;
+				return STATUS.RECEIVE_UNKNOWN_TYPE;
 		}
 		if (columnSet != null && columnValue != null && tableName != null)
 		{
-			if (timestamp != null) DatabaseManager.insert(tableName, columnSet, columnValue, timestamp);
-			else DatabaseManager.insert(tableName, columnSet, columnValue);
+			isInsertSuccess = (timestamp != null) ? DatabaseManager.insert(tableName, columnSet, columnValue, timestamp) : DatabaseManager.insert(tableName, columnSet, columnValue);
 		}
-	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void sessionIdle(IoSession session, IdleStatus status)
-	{
-		logger.info("Disconnecting the idle.");
-		// disconnect an idle client
-		session.close();
-	}
+		if (!isCreateTableSuccess) return STATUS.DB_CREATE_FAIL;
+		if (!isInsertSuccess) return STATUS.DB_INSERT_FAIL;
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void exceptionCaught(IoSession session, Throwable cause)
-	{
-		// close the connection on exceptional situation
-		session.close();
-	}
-
-	@Override
-	public void sessionCreated(IoSession session) throws Exception
-	{
-		logger.debug("@1111111111111111111111111111");
-		logger.error("@222222222222222222222222222222");
-		logger.trace("@333333333333333333333333");
-		logger.warn("@4444444444444444444444444");
-
-		session.write("111111111111111111111111111");
-		// TODO Auto-generated method stub
-		super.sessionCreated(session);
-	}
-
-	@Override
-	public void messageSent(IoSession session, Object message) throws Exception
-	{
-		// session.write("111111111111111111111111111222222222222");
-		super.messageSent(session, message);
+		return STATUS.RECEIVE_OK;
 	}
 }
